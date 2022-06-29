@@ -1,7 +1,7 @@
 import { useState } from 'react'
+import { useRouter } from 'next/router'
 import { NextPage, GetStaticPaths, GetStaticProps } from 'next'
 import confetti from 'canvas-confetti'
-import { pokeApi } from '../../api'
 import { Pokemon } from '../../interfaces'
 import { localFavorites, getPokemonInfo } from '../../utils'
 import { Layout } from '../../components/layouts'
@@ -14,22 +14,26 @@ interface Props {
 const PokemonPage: NextPage<Props> = ({ pokemon }) => {
   const [favorites, setFavorites] = useState(localFavorites.isFavorites(pokemon.id))
 
+  const router = useRouter()
+
   const handleFavorites = () => {
     localFavorites.toggleFavorites(pokemon.id)
     setFavorites(!favorites)
 
     if (favorites) return
 
-      confetti({
-        zIndex: 999,
-        particleCount: 100,
-        spread: 160,
-        angle: -100,
-        origin: {
-          x: 1,
-          y: 0,
-        },
-      })
+    confetti({
+      zIndex: 999,
+      particleCount: 100,
+      spread: 160,
+      angle: -100,
+      origin: {
+        x: 1,
+        y: 0,
+      },
+    })
+
+    router.push('/favorites')
   }
 
   return (
@@ -45,11 +49,12 @@ const PokemonPage: NextPage<Props> = ({ pokemon }) => {
         <Grid xs={12} sm={8}>
           <Card isHoverable>
             <Card.Header css={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Text h2 transform='capitalize'>{pokemon.name}</Text>
+              <Text size={30} transform='capitalize'>{pokemon.name}</Text>
               <Button
                 color='gradient'
                 ghost={!favorites}
                 onClick={handleFavorites}
+                size='sm'
               >
                 {
                   favorites ? 'Favorites' : 'Add to fav'
